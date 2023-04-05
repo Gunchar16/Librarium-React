@@ -1,7 +1,7 @@
 import BookColumns from './BookModel';
 import { useQuery, useMutation,  QueryClient } from '@tanstack/react-query';
-import { BooksGetAll, BookDelete,  AuthorizeUser } from './BookService';
-import { Table, Button } from 'antd';
+import { BooksGetAll, BookDelete,  AuthorizeUser, RegisterUser } from './BookService';
+import { Table, Button, message } from 'antd';
 import { Fragment, useContext } from 'react';
 import { userContext } from './UserContext.js';
 
@@ -12,11 +12,27 @@ const credentials = {
 
 export default function Book() {
 
-  const asd = useContext(userContext);  
+  const usrContext = useContext(userContext);  
 
 
   const token = useMutation(() => AuthorizeUser(credentials), {
-        onSuccess: (data) => asd.setUser(credentials.email, data.data)});
+        onSuccess: (data) => {
+            if(data.errorCode) {
+                usrContext.resetUser();
+                message.error("Could not authorize.")
+            
+            } 
+            else{
+                usrContext.setUser(credentials.email, data.data);
+                message.success("Successfully authorized")
+            }
+            refetch();
+        }
+    })
+
+  const register = useMutation(() => RegisterUser({...credentials, username:"string"}),{
+    onSuccess: (data) => data.errorCode === "ALREADY_EXISTS" ?  message.error("An account with that credentials already exists") : message.success("Creation successful")
+  })
 
   const {  data,  refetch } = useQuery({
     queryKey: ['book'],
@@ -40,9 +56,13 @@ export default function Book() {
   const handleAuthorize = () => {
     token.mutate(credentials);
   }
+  const handleRegister = () => {
+    register.mutate({...credentials, username:"string"});
+  }
 
   return ( 
     <Fragment>
+    <Button onClick={() => handleRegister(credentials)}>REGISTER (Click only once)</Button>
     <Button onClick={() => handleAuthorize(credentials)}>AUTHORIZE</Button>
     <Table
       pagination={false}

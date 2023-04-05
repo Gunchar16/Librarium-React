@@ -28,6 +28,11 @@ export async function BooksGetAll () {
       return res.data;
     });
   }
+  export async function RegisterUser(user) {
+    return await librariumApi.post(`/auth/register`, user).then(res => {
+      return res.data;
+    });
+  }
 
   export async function BookDelete(id) {
     return await librariumApi.delete(`/book/${id}`).then(res => {
