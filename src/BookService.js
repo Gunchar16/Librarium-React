@@ -24,7 +24,6 @@ export async function BooksGetAll () {
 
 
   export async function AuthorizeUser(user) {
-    console.log("asdajsdasd");
     return await librariumApi.post(`/auth/login`, user).then(res => {
       return res.data;
     });

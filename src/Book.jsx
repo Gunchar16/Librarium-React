@@ -18,7 +18,6 @@ export default function Book() {
   const token = useMutation(() => AuthorizeUser(credentials), {
         onSuccess: (data) => asd.setUser(credentials.email, data.data)});
 
-    console.log(token);
   const {  data,  refetch } = useQuery({
     queryKey: ['book'],
     queryFn: BooksGetAll,

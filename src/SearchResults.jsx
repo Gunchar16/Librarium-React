@@ -12,7 +12,6 @@ export default function SearchResults() {
 
   const { data } = useQuery(['books', query], () => BookSearch(query));
 
-  console.log(data);
 
 
   return (
